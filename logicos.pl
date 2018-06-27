@@ -51,16 +51,20 @@ firstn([H|T], Numero, [H|Resultado]):-
     firstn(T,Numero2,Resultado).
 
 
-del_element([],_,[]) :- !.
+diferencia([],_,[]) :-!.
+diferencia(_,[],_) :-!.
 
-% del_element([H|T],1,[H2|T2]) :- .
+diferencia([H|T],[H2|T2],L) :-
+    isContained(H,[H2|T2]), 
+    diferencia(T,[H2|T2],L).
     
+diferencia([H|T],[H2|T2],[H|L]) :-
+    diferencia(T,[H2|T2],L).
     
-% del_element([H|T],X,[H2|T2]) :- .
-
-
-
-
+isContained([],_):-true, !.
+isContained(_,[]):-false, !.
+isContained(X,[H|T]) :-
+    (X == H -> true ; isContained(X,T)).
 
 
 

@@ -1,3 +1,5 @@
+(require racket/trace)
+
 (define (insert value lst)
     (cond 
         ((null? lst)(list value))        
@@ -87,16 +89,6 @@
     ) 
 )
 
-
-(define (diferencia A B)
-    (cond
-        ((null? A) '())
-        ((null? B) A)
-        ((eqv? (car A) (car B)) (diferencia (cdr A) (cdr B)) )
-        (else (cons(car A) (diferencia (cdr A) (cdr B) )) )
-    )    
-)
-
 (define (trenza A B) 
     (cond
         ((null? A) B)
@@ -166,8 +158,9 @@
 (define (remove_nth lst n)
     (cond
         ((null? lst) '())  
-        ((null? n) '())
-        (else (remove_nth (nthaux lst n) (+ n (- n 1)) ))
+        ((= n 1) '())
+        ;((= n 0) lst)
+        (else (remove_nth (nthaux lst n) (+ n 1)))
     )
 )
 
@@ -175,6 +168,7 @@
     (cond
         ((null? lst) '())
         ((= n 1) (cdr lst))
+        ((> n (nelements lst)) lst)
         (else (cons (car lst) (nthaux (cdr lst) (- n 1))))
     )
 )
@@ -188,17 +182,68 @@
     )
 )
 
+(define (ndelete lst n)
+    (let recur ((i 1) (rest lst))
+        (cond 
+            ((null? rest) '())
+            ((= i n) (recur 1 (cdr rest)))
+            (else (cons (car rest) (recur (+ i 1) (cdr rest))))
+        )
+    )
+)
 
+(define (intersection lst1 lst2)
+    (cond
+        ((or (null? lst1) (null? lst2)) '())
+        ((intersectionAux (car lst1) lst2) (cons (car lst1) (intersection (cdr lst1) lst2) ))
+        (else (intersection (cdr lst1) lst2 ))
+    )
+)
 
+(define (intersectionAux n lst)
+    (cond
+        ((null? lst) #f)
+        ((eqv? n (car lst)) #t)
+        (else (intersectionAux n (cdr lst)))
+    )
+)
 
+(define (union lst1 lst2)
+    (cond
+        ((null? lst2) lst1)
+        ((unionAux (car lst2) lst1) (union lst1 (cdr lst2)))
+        (else (union (cons (car lst2) lst1) (cdr lst2)) )
+        ;(else (union (append lst1 (list (car lst2))) (cdr lst2)) )
+    )    
+)
 
+(define (unionAux n lst)
+    (cond
+        ((null? lst) #f)
+        ((eqv? n (car lst)) #t)
+        (else (unionAux n (cdr lst)))
+    )
+)
 
+(define (final lst)
+    (primero (reverse lst))
+)
 
+(define (reverse lst)
+    (cond
+        ((null? lst) '())
+        (else (append (reverse (cdr lst)) (list (car lst))))
+    )    
+)
 
-
-
-
-
+(define (primero lst)
+    (cond
+        ((null? lst) '())
+        ((null? (cdr lst)) (list (car lst)))
+        ((eqv? (car lst) (cadr lst)) (append (list (car lst)) (primero (cdr lst))) )
+        (else (list (car lst)))
+    )    
+)
 
 
 
@@ -309,6 +354,7 @@
 ; (display (rango 2 15))
 ; (newline)
 ; (display (rango -15 0))
+; (newline)
 ; (display "Nodup")
 ; (newline)
 ; (display (nodup '(a a a a a a b b b c b b d d d e f f)) )
@@ -333,8 +379,43 @@
 ; (display (diferencia '() '(b c d)))
 ; (newline)
 ; (display (diferencia '(a b c) '()))
+; (newline)
 ; (display "Replace")
 ; (newline)
 ; (display (replace '(1 1 2 3 4 1 2 4 3) 1 7))
 ; (newline)
 ; (display (replace '(a a b c d a b d c) 'a 'h))
+; (newline)
+; (display "Intersection")
+; (newline)
+; (display (intersection '(a b c) '() ))
+; (newline)
+; (display (intersection '() '(a b c) ))
+; (newline)
+; (display (intersection '(a b c d e) '(a c f g) ))
+; (newline)
+; (display (intersection '(1 2 3 4 5) '(a c f g) ))
+; (newline)
+; (display (intersection '(a b c d e) '(y u b D e a c) ))
+; (newline)
+; (display "union")
+; (newline)
+; (display (union '() '(a b c d e) ))
+; (newline)
+; (display (union '(a g h e s) '() ))
+; (newline)
+; (display (union '(1 2 3 4 5) '(6 7 8 9 1 2 3) ))
+; (newline)
+; (display (union '(a b c d e) '(f g h i j) ))
+; (newline)
+; (display "Final")
+; (newline)
+; (display (final '(a))) ; '(a)
+; (newline)
+; (display (final '())) ; '()
+; (newline)
+; (display (final '(a b a c a a a))) ; '(a a a)
+; (newline)
+; (display (final '(v v v v v v v v v))) ; '(v v v v v v v v v)
+; (newline)
+; (display (final '(1 2 3 3 3 3 3 3 3 3 3))) ; '(3 3 3 3 3 3 3 3 3)
