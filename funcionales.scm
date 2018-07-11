@@ -1,5 +1,7 @@
 (require racket/trace)
+;simple exercises in scheme, trying not to use built-in functions
 
+; inserts a value in order in the list
 (define (insert value lst)
     (cond 
         ((null? lst)(list value))        
@@ -8,15 +10,17 @@
     )
 ) 
 
-(define (evenlist numberlist)
-  (cond ((null? numberlist) '())
-        ((not (pair? numberlist))
-            (if (even? numberlist) (list numberlist) '() )
-        )
-        (else (append (evenlist (car numberlist)) (evenlist (cdr numberlist)) ) )
-    )
+; return even numbers in the list
+(define (evenlist lst)
+    (cond
+        ((null? lst) '())
+        ((pair? (car lst)) (append (evenlist (car lst)) (evenlist (cdr lst)) ) )
+        ((even? (car lst)) (cons (car lst) (evenlist (cdr lst)) ))
+        (else (evenlist (cdr lst)))
+    )    
 )
 
+; return the last element of the list
 (define (my_last lst)
     (cond
         ((null? lst) list '())
@@ -25,6 +29,7 @@
     )
 )
 
+;return the last but one element of the list
 (define (last_but_one lst)
     (cond
         ((null? lst) list '())
@@ -34,6 +39,7 @@
     )
 )
 
+; returns the element in the K'th position of the list
 (define (k_element lst pos)
     (cond
         ((null? lst) #f)
@@ -42,6 +48,7 @@
     )
 )
 
+; removes the element in the position specified
 (define (del_element lst pos)
     (cond
         ((null? lst) '())
@@ -50,10 +57,12 @@
     )
 )
 
+; returns count of elements in the list
 (define (nelements lst)
     (if (null? lst) 0 (+ 1 (nelements (cdr lst))))
 )
 
+; returns the even position values of the list
 (define (posPares lst)
     (cond 
         ((null? lst) '())
@@ -62,6 +71,7 @@
     )
 )
 
+; returns a flattened list out of the parameter list
 (define (aplana lst)
     (cond
         ((null? lst) '())
@@ -70,6 +80,7 @@
     )
 )
 
+; returns true if list1 is contained in list2, false otherwise
 (define (contenida lst1 lst2)
     (cond
         ((and (null? lst1) (null? lst2)) #t)
@@ -89,14 +100,16 @@
     ) 
 )
 
-(define (trenza A B) 
+; mixes list1 and lis2
+(define (trenza lst1 lst2) 
     (cond
-        ((null? A) B)
-        ((null? B) A)
-        (else(cons (car A) (trenza B (cdr A))))
+        ((null? lst1) lst2)
+        ((null? lst2) lst1)
+        (else(cons (car lst1) (trenza lst2 (cdr lst1))))
     )
 )
 
+; returns longest iteration of the first element from the first position
 (define (larga lst)
     (cond 
         ((null? lst) '())
@@ -105,6 +118,7 @@
     )
 )
 
+; removes the element in the n'th position of the list
 (define (removeN lst n)
     (cond
         ((null? lst) '())
@@ -114,6 +128,7 @@
     )    
 )
 
+; returns a list with all integers between min and max
 (define (rango min max)
     (cond
         ((>= min max) '())
@@ -121,6 +136,7 @@
     )
 )
 
+; returns the list without duplicates 
 (define (nodup lst)
     (cond
         ((null? lst) '())
@@ -130,6 +146,7 @@
     )    
 )
 
+; duplicates every element in the list
 (define (duplicate lst)
     (cond
         ((null? lst) '())
@@ -137,6 +154,7 @@
     )
 )
 
+; returns every element in lstA that isnt in lstB
 (define (diferencia lstA lstB)
     (cond
         ((null? lstA) '())
@@ -155,11 +173,11 @@
     )
 )
 
+; remove the element in the n position
 (define (remove_nth lst n)
     (cond
         ((null? lst) '())  
         ((= n 1) '())
-        ;((= n 0) lst)
         (else (remove_nth (nthaux lst n) (+ n 1)))
     )
 )
@@ -173,6 +191,7 @@
     )
 )
 
+; replaces every occurence of A with B in the list
 (define (replace lst A B)
     (cond
         ((null? lst) '()) 
@@ -182,6 +201,7 @@
     )
 )
 
+; removes an element from the list every n elements
 (define (ndelete lst n)
     (let recur ((i 1) (rest lst))
         (cond 
@@ -192,6 +212,7 @@
     )
 )
 
+; returns the elements that are found in both lists
 (define (intersection lst1 lst2)
     (cond
         ((or (null? lst1) (null? lst2)) '())
@@ -208,6 +229,7 @@
     )
 )
 
+; returns the elements in both lists skipping duplicates
 (define (union lst1 lst2)
     (cond
         ((null? lst2) lst1)
@@ -225,6 +247,7 @@
     )
 )
 
+; returns the longest repetition of the last element in the list
 (define (final lst)
     (primero (reverse lst))
 )
@@ -245,8 +268,128 @@
     )    
 )
 
+; returns the max depth of the list
+(define (profundidad Lista)
+    (cond 
+        ((null? Lista) 1)
+        ((not(list? Lista)) 0)
+        ((list? (car Lista))
+            (let ( (A (+(profundidad (car Lista))1)) (B (profundidad (cdr Lista))) )
+                (if (> A B) A B)
+            )        
+        )
+        (else (profundidad (cdr Lista)))
+    )
+)
+
+; adds element by element
+(define (add lst1 lst2)
+    (cond
+        ((null? lst1) lst2)
+        ((null? lst2) lst1)
+        (else (cons (+ (car lst1) (car lst2)) (add (cdr lst1) (cdr lst2)) ) )
+    )    
+)
+
+; returns true if a list is a palindrome
+; (define (palindrome lst)
+;     (cond
+;         ((null? lst) #t)
+;         ((equals lst (my_reverse lst)) #t)
+;         (else #f)
+;     )
+; )
+
+(define (equals lst1 lst2)
+    (cond
+        ((and (null? lst1) (null? lst2) ) #t)
+        ((eqv? (car lst1) (car lst2)) (equals (cdr lst1) (cdr lst2)))
+        (else #f)
+    )    
+)
+
+(define (my_reverse lst)
+    (cond
+        ((null? lst) '())
+        (else (append (my_reverse (cdr lst)) (list (car lst))))
+    )    
+)
+; remove the last n elements of the list
+(define (last_n lst n)
+    (borra lst (- (longitud lst) n))
+)
+
+(define (borra lst n)
+    (cond
+        ((<= n 0) '())
+        (else (cons (car lst) (borra (cdr lst) (- n 1))) )
+    )
+)
+
+(define (longitud lst)
+    (cond
+        ((null? lst) 0)
+        (else (+ (longitud (cdr lst)) 1) )
+    )    
+)
+
+(define (borraN lst n)
+    (cond
+        ((null? lst) '())
+        (else (borraNAux lst n))
+    )    
+)
+
+(define (borraNAux lst n)
+    (cond
+        ((null? lst) '())
+        ((null? (cdr lst)) (car lst))
+        ((= n 0) (borraNAux lst n))
+        (else (cons (car lst) (borraNAux lst (- n 1))))
+    )    
+)
+
+(define (palindrome lst)
+    (if (comprueba lst (invierte lst)) #t #f)    
+)
+
+(define (comprueba lst invertida)
+    (cond
+        ((null? lst) #t)
+        ((not(eqv? (car lst) (car invertida))) #f)
+        (else (comprueba (cdr lst) (cdr invertida)) )
+    )
+)
+
+(define (invierte lst)
+    (cond
+        ((null? lst) '()) 
+        (else (append (invierte (cdr lst)) (list (car lst)) ))
+    )    
+)
 
 
+
+
+; (display (last_n '(1 2 3 4 5 6) 2))
+; (newline)
+; (display (last_n '(1 2 3 4 5 6) 6))
+; (newline)
+; (display (last_n '(1 2 3 4 5 6) 8))
+
+
+; (display (my_reverse '(b c b a)))
+; (newline)
+; (display (palindrome '()))
+; (newline)
+; (display (palindrome '(a b c b a)))
+; (newline)
+; (display (palindrome '(a b c d a b)))
+
+
+; tests, uncomment to see results. (trace "name") before the tests to activate the trace 
+; (display "Tests")
+; (newline)
 ; (display "trenza")
 ; (newline)
 ; (display (trenza '(a b c) '(a h d)) )
@@ -272,7 +415,6 @@
 ; (display (posPares '(1 -1 3) ))
 ; (newline)
 ; (display (posPares '(3 5 2 1 2 1 6) ))
-; (newline)
 ; (newline)
 ; (display "Aplana")
 ; (newline)
@@ -347,6 +489,7 @@
 ; (display (removeN '(a b c d e f g) 0) )
 ; (newline)
 ; (display "Rango")
+; (newline)
 ; (display (rango 15 3))
 ; (newline)
 ; (display (rango 1 1))
@@ -364,6 +507,7 @@
 ; (display (nodup '()) )
 ; (newline)
 ; (display "duplicate")
+; (newline)
 ; (display (duplicate '(a b c)))
 ; (newline)
 ; (display "Diferencia")
@@ -419,3 +563,25 @@
 ; (display (final '(v v v v v v v v v))) ; '(v v v v v v v v v)
 ; (newline)
 ; (display (final '(1 2 3 3 3 3 3 3 3 3 3))) ; '(3 3 3 3 3 3 3 3 3)
+; (newline)
+; (display "Profundidad")
+; (newline)
+; (display (profundidad 'a)) ; 0
+; (newline)
+; (display (profundidad '())) ; 1
+; (newline)
+; (display (profundidad '(a(b)))) ; 2
+; (newline)
+; (display (profundidad '(a (b (c)) h (c (d (g) ))))) ; 4
+; (newline)
+; (display (profundidad '(a (a b (c) d (e (f (g) ) ) ) ))) ; 5
+; (newline)
+; (display "Add")
+; (newline)
+; (display (add '(1 2 3) '(1 2 3) ))
+; (newline)
+; (display (add '() '(1 2 3) ))
+; (newline)
+; (display (add '(1 2 3) '() ))
+; (newline)
+; (display (add '(1) '(1) ))
